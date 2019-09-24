@@ -1,12 +1,12 @@
 {
-  "name": "chwech-cli",
-  "version": "1.0.0",
+  "name": "@chwech/cli",
+  "version": "0.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "chwech",
   "license": "ISC",
   "dependencies": {
     "download-git-repo": "^2.0.0"
