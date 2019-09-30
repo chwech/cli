@@ -2,6 +2,7 @@
 const program = require('commander')
 const download = require('./download')
 const path = require('path')
+const caniuse = require('./caniuse')
 
 const TPL_NAME = {
   'api-cloud': 'api-cloud-template'
@@ -28,6 +29,13 @@ program
       .catch(err => {
         console.log(err)
       })
+  });
+
+program
+  .command('caniuse <feature>')
+  .description('caniuse查找特性支持情况')
+  .action((feature) => {
+    caniuse(feature)
   });
 
 program.parse(process.argv);
