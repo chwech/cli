@@ -3,6 +3,7 @@ const program = require('commander')
 const download = require('./download')
 const path = require('path')
 const caniuse = require('./caniuse')
+const tpl = require('./tpl')
 
 const TPL_NAME = {
   'api-cloud': 'api-cloud-template'
@@ -36,6 +37,13 @@ program
   .description('caniuse查找特性支持情况')
   .action((feature) => {
     caniuse(feature)
+  });
+
+program
+  .command('tpl')
+  .description('列出现有模板列表')
+  .action(() => {
+    tpl.ls()
   });
 
 program.parse(process.argv);

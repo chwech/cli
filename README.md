@@ -5,6 +5,9 @@ npm i -g @chwech/cli
 
 # 使用
 ```
+// 列出模板列表
+chwech tpl
+
 // 初始化api-cloud-template
 chwech init api-cloud
 

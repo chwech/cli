@@ -1,0 +1,8 @@
+{
+  "template": [
+    {
+      "name": "api-cloud-template",
+      "git": "https://github.com/chwech/api-cloud-template"
+    }
+  ]
+}
