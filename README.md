@@ -13,4 +13,7 @@ chwech init api-cloud
 
 // caniuse查询
 chwech caniuse es6
+
+// 更新caniuse数据库
+chwech caniuse update
 ```
