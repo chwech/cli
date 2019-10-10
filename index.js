@@ -2,7 +2,8 @@
 const program = require('commander')
 const download = require('./download')
 const path = require('path')
-const caniuse = require('./caniuse')
+const { caniuse, updateCaniuseVersion, fetchCaniuseDataJson } = require('./caniuse')
+
 const tpl = require('./tpl')
 
 const TPL_NAME = {
@@ -35,8 +36,17 @@ program
 program
   .command('caniuse <feature>')
   .description('caniuse查找特性支持情况')
-  .action((feature) => {
-    caniuse(feature)
+  .action(async (feature) => {
+    if (feature === 'update') {
+      try {  
+        await fetchCaniuseDataJson()
+        await updateCaniuseVersion()
+      } catch (error) {
+        console.log(error)
+      }
+    } else {
+      caniuse(feature)
+    }
   });
 
 program

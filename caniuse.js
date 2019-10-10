@@ -1,8 +1,58 @@
 const fs = require('fs')
 const https = require('https')
 const { CANIUSE_DATA_VERSION } = require('./data/config')
+const chalk = require('chalk');
+const ProgressBar = require('progress');
+const path = require('path')
 
 let log = console.log
+
+async function updateCaniuseVersion(params) {
+  fs.readFile(path.join(__dirname, './data/config.json'), async (err, data) => {
+    if (err) {
+      console.log(err)
+    }
+    data = JSON.parse(data)
+    data.CANIUSE_DATA_VERSION = await checkVersion()
+
+    fs.writeFile(path.join(__dirname, './data/config.json'), JSON.stringify(data), (err) => {
+      if (err) throw err;
+      console.log('当前使用caniuse数据库版本为：', data.CANIUSE_DATA_VERSION);
+    })
+  })
+}
+
+function fetchCaniuseDataJson(params) {
+  return new Promise((resolve, reject) => {
+    const req = https.get('https://raw.githubusercontent.com/Fyrd/caniuse/master/data.json', (res) => {
+      var len = parseInt(res.headers['content-length'], 10);  
+      let rawData = ''
+      var bar = new ProgressBar('downloading [:bar] :rate/bps :percent :etas', {
+        complete: '=',
+        incomplete: ' ',
+        width: 40,
+        total: len
+      });
+      res.on('data', (d) => {
+        bar.tick(d.length)
+        rawData += d
+      });
+      // 获取数据完成
+      res.on('end', () => {
+        fs.writeFile('data.json', rawData, (err) => {
+          if (err) throw err;
+          console.log('caniuse数据库已更新');
+        });
+        resolve(rawData)
+      })
+    })
+    req.on('error', (e) => {
+      console.error('获取caniuse数据的data.json出错', e);
+      reject(e)
+    });
+    req.end()
+  })
+}
 
 function fetchCaniusePackageJson () {
   return new Promise((resolve, reject) => {
@@ -58,11 +108,8 @@ async function caniuse (feature) {
     // 检查caniuse数据库是否过期
     let version = await checkVersion()
     if (version !== CANIUSE_DATA_VERSION) {
-      log(`
-      caniuse数据库版本有更新, 
-      当前版本号${CANIUSE_DATA_VERSION},
-      最新版本号${version}
-      `)
+      log(`提示：caniuse数据库版本有更新, 当前版本号${chalk.green(CANIUSE_DATA_VERSION)},最新版本号${chalk.green(version)}, 
+      你可以运行${chalk.red('chwech caniuse update')}更新数据库`)
     }
     const result = await search(feature)
 
@@ -96,5 +143,10 @@ async function caniuse (feature) {
     log('查找失败：', error)
   }
 }
-caniuse()
-module.exports = caniuse
+
+
+module.exports = {
+  caniuse: caniuse,
+  updateCaniuseVersion: updateCaniuseVersion,
+  fetchCaniuseDataJson: fetchCaniuseDataJson
+}
