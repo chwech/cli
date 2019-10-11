@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "ts": "tsc -p tsconfig.json --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "chwech",
@@ -17,6 +18,7 @@
     "chwech": "index.js"
   },
   "devDependencies": {
+    "@types/node": "^12.7.12",
     "commander": "^3.0.1"
   }
 }
