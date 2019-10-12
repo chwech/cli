@@ -95,7 +95,7 @@ interface dataJson {
 }
 function search(feature: string) {
   return new Promise((resolve, reject) => { 
-    fs.readFile(path.join(__dirname, './src/data/data.json'), 'utf8', (err: any, data: string | dataJson) => {
+    fs.readFile(path.join(__dirname, './data/data.json'), 'utf8', (err: any, data: string | dataJson) => {
       if (err) {
         reject(err)
       }
