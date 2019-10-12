@@ -95,7 +95,7 @@ interface dataJson {
 }
 function search(feature: string) {
   return new Promise((resolve, reject) => { 
-    fs.readFile('./data.json', 'utf8', (err: any, data: string | dataJson) => {
+    fs.readFile(path.join(__dirname, './src/data/data.json'), 'utf8', (err: any, data: string | dataJson) => {
       if (err) {
         reject(err)
       }
@@ -155,14 +155,4 @@ export async function caniuse (feature: string) {
   } catch (error) {
     log('查找失败：', error)
   }
-}
-
-let obj = {
-  prop: {
-    a: 123
-  }
-}
-
-for (let [, value] of Object.entries(obj)) {
-  console.log(value.a)
 }

@@ -15,7 +15,7 @@
     "progress": "^2.0.3"
   },
   "bin": {
-    "chwech": "index.js"
+    "chwech": "build/index.js"
   },
   "devDependencies": {
     "@types/node": "^12.7.12",

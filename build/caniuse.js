@@ -81,7 +81,7 @@ async function checkVersion() {
 }
 function search(feature) {
     return new Promise((resolve, reject) => {
-        fs.readFile('./data.json', 'utf8', (err, data) => {
+        fs.readFile(path.join(__dirname, './src/data/data.json'), 'utf8', (err, data) => {
             if (err) {
                 reject(err);
             }
@@ -136,11 +136,3 @@ async function caniuse(feature) {
     }
 }
 exports.caniuse = caniuse;
-let obj = {
-    prop: {
-        a: 123
-    }
-};
-for (let [, value] of Object.entries(obj)) {
-    console.log(value.a);
-}
