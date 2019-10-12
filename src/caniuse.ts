@@ -7,17 +7,21 @@ const path = require('path')
 
 let log = console.log
 
+interface configJson {
+  CANIUSE_DATA_VERSION: string
+}
+
 export async function updateCaniuseVersion() {
-  fs.readFile(path.join(__dirname, './data/config.json'), async (err: Error, data: string) => {
+  fs.readFile(path.join(__dirname, './data/config.json'), async (err: Error, data: string | configJson) => {
     if (err) {
       console.log(err)
     }
-    data = JSON.parse(data)
+    data = JSON.parse(data as string) as configJson
     data.CANIUSE_DATA_VERSION = await checkVersion()
 
     fs.writeFile(path.join(__dirname, './data/config.json'), JSON.stringify(data), (err: Error) => {
       if (err) throw err;
-      console.log('当前使用caniuse数据库版本为：', data.CANIUSE_DATA_VERSION);
+      console.log('当前使用caniuse数据库版本为：', (data as configJson).CANIUSE_DATA_VERSION);
     })
   })
 }
