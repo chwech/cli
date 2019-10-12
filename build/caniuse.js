@@ -87,7 +87,7 @@ function search(feature) {
             }
             var data1 = JSON.parse(data);
             let result = [];
-            for (let [key, value] of Object.entries(data1.data)) {
+            for (let [, value] of Object.entries(data1.data)) {
                 const keywords = value.keywords;
                 if (keywords.indexOf(feature) !== -1) {
                     result.push(value);
@@ -106,7 +106,7 @@ async function caniuse(feature) {
       你可以运行${chalk.red('chwech caniuse update')}更新数据库`);
         }
         const result = await search(feature);
-        result.forEach(item => {
+        result.forEach((item) => {
             log('==================================================');
             log('特性:', item.title);
             log('浏览器支持情况:');
@@ -136,3 +136,11 @@ async function caniuse(feature) {
     }
 }
 exports.caniuse = caniuse;
+let obj = {
+    prop: {
+        a: 123
+    }
+};
+for (let [, value] of Object.entries(obj)) {
+    console.log(value.a);
+}

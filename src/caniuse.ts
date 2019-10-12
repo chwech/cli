@@ -28,7 +28,7 @@ export async function updateCaniuseVersion() {
 
 export function fetchCaniuseDataJson() {
   return new Promise((resolve, reject) => {
-    const req = https.get('https://raw.githubusercontent.com/Fyrd/caniuse/master/data.json', (res) => {
+    const req = https.get('https://raw.githubusercontent.com/Fyrd/caniuse/master/data.json', (res: any) => {
       var len = parseInt(res.headers['content-length'], 10);  
       let rawData = ''
       var bar = new ProgressBar('downloading [:bar] :rate/bps :percent :etas', {
@@ -37,7 +37,7 @@ export function fetchCaniuseDataJson() {
         width: 40,
         total: len
       });
-      res.on('data', (d) => {
+      res.on('data', (d: any) => {
         bar.tick(d.length)
         rawData += d
       });
@@ -50,7 +50,7 @@ export function fetchCaniuseDataJson() {
         resolve(rawData)
       })
     })
-    req.on('error', (e) => {
+    req.on('error', (e: any) => {
       console.error('获取caniuse数据的data.json出错', e);
       reject(e)
     });
@@ -58,11 +58,11 @@ export function fetchCaniuseDataJson() {
   })
 }
 
-function fetchCaniusePackageJson () {
+function fetchCaniusePackageJson (): Promise<string> {
   return new Promise((resolve, reject) => {
-    const req = https.get('https://raw.githubusercontent.com/Fyrd/caniuse/master/package.json', (res) => {
+    const req = https.get('https://raw.githubusercontent.com/Fyrd/caniuse/master/package.json', (res: any) => {
       let rawData = ''
-      res.on('data', (d) => {
+      res.on('data', (d: any) => {
         rawData += d
       });
       // 获取数据完成
@@ -70,7 +70,7 @@ function fetchCaniusePackageJson () {
         resolve(rawData)
       })
     })
-    req.on('error', (e) => {
+    req.on('error', (e: any) => {
       console.error('获取caniuse数据的package.json出错', e);
       reject(e)
     });
@@ -78,23 +78,32 @@ function fetchCaniusePackageJson () {
   })
 }
 
+interface packageJson {
+  version: string
+}
 async function checkVersion () {
-  let packageJson = await fetchCaniusePackageJson()
-  packageJson = JSON.parse(packageJson)
+  let packageJson: string | packageJson = await fetchCaniusePackageJson()
+  packageJson = JSON.parse(packageJson) as packageJson
   return packageJson.version
 }
 
+interface data {
+  [name: string]: any
+}
+interface dataJson {
+  data: data
+}
 function search(feature: string) {
   return new Promise((resolve, reject) => { 
-    fs.readFile('./data.json', 'utf8', (err, data) => {
+    fs.readFile('./data.json', 'utf8', (err: any, data: string | dataJson) => {
       if (err) {
         reject(err)
       }
 
-      var data1 = JSON.parse(data)
+      var data1: dataJson = JSON.parse(data as string)
       let result = []
 
-      for(let [key, value] of Object.entries(data1.data)) {
+      for(let [, value] of Object.entries(data1.data)) {
         const keywords = value.keywords
         
         if (keywords.indexOf(feature) !== -1) {
@@ -115,9 +124,9 @@ export async function caniuse (feature: string) {
       log(`提示：caniuse数据库版本有更新, 当前版本号${chalk.green(CANIUSE_DATA_VERSION)},最新版本号${chalk.green(version)}, 
       你可以运行${chalk.red('chwech caniuse update')}更新数据库`)
     }
-    const result = await search(feature)
+    const result:any = await search(feature)
 
-    result.forEach(item => {
+    result.forEach((item: any) => {
       log('==================================================')
       log('特性:', item.title)
       log('浏览器支持情况:')
@@ -126,7 +135,7 @@ export async function caniuse (feature: string) {
       let isCheckVersion: string[] = []
 
       for (const [browser, versions] of Object.entries(item.stats)) {
-        for(const [version, isSupport] of Object.entries(versions)) {
+        for(const [version, isSupport] of Object.entries(versions as any)) {
           if (isCheckVersion.includes(version)) {
             findOneSupport = false
             continue
@@ -146,4 +155,14 @@ export async function caniuse (feature: string) {
   } catch (error) {
     log('查找失败：', error)
   }
+}
+
+let obj = {
+  prop: {
+    a: 123
+  }
+}
+
+for (let [, value] of Object.entries(obj)) {
+  console.log(value.a)
 }
