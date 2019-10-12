@@ -1,12 +1,17 @@
 #!/usr/bin/env node
+import path from 'path'
+
 import program from 'commander'
-const download = require('./download')
-const path = require('path')
-const { caniuse, updateCaniuseVersion, fetchCaniuseDataJson } = require('./caniuse')
+
+import download from './download'
+import { caniuse, updateCaniuseVersion, fetchCaniuseDataJson } from './caniuse'
 
 const tpl = require('./tpl')
 
-const TPL_NAME = {
+interface tpl {
+  [propName: string]: string;
+}
+const TPL_NAME: tpl = {
   'api-cloud': 'api-cloud-template'
 }
 

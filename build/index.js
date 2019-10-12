@@ -4,10 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const path_1 = __importDefault(require("path"));
 const commander_1 = __importDefault(require("commander"));
-const download = require('./download');
-const path = require('path');
-const { caniuse, updateCaniuseVersion, fetchCaniuseDataJson } = require('./caniuse');
+const download_1 = __importDefault(require("./download"));
+const caniuse_1 = require("./caniuse");
 const tpl = require('./tpl');
 const TPL_NAME = {
     'api-cloud': 'api-cloud-template'
@@ -19,7 +19,7 @@ commander_1.default
     console.log(tpl, target);
     if (target) {
         let workspace = process.cwd();
-        let dirname = path.basename(workspace);
+        let dirname = path_1.default.basename(workspace);
         if (target === dirname) {
             target = '.';
         }
@@ -27,7 +27,7 @@ commander_1.default
     else {
         target = '.';
     }
-    download(TPL_NAME[tpl], target)
+    download_1.default(TPL_NAME[tpl], target)
         .then((target) => {
         console.log(target);
     })
@@ -41,15 +41,15 @@ commander_1.default
     .action(async (feature) => {
     if (feature === 'update') {
         try {
-            await fetchCaniuseDataJson();
-            await updateCaniuseVersion();
+            await caniuse_1.fetchCaniuseDataJson();
+            await caniuse_1.updateCaniuseVersion();
         }
         catch (error) {
             console.log(error);
         }
     }
     else {
-        caniuse(feature);
+        caniuse_1.caniuse(feature);
     }
 });
 commander_1.default
