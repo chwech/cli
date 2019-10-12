@@ -8,7 +8,7 @@ const path_1 = __importDefault(require("path"));
 const commander_1 = __importDefault(require("commander"));
 const download_1 = __importDefault(require("./download"));
 const caniuse_1 = require("./caniuse");
-const tpl = require('./tpl');
+const tpl_1 = require("./tpl");
 const TPL_NAME = {
     'api-cloud': 'api-cloud-template'
 };
@@ -56,6 +56,6 @@ commander_1.default
     .command('tpl')
     .description('列出现有模板列表')
     .action(() => {
-    tpl.ls();
+    tpl_1.ls();
 });
 commander_1.default.parse(process.argv);

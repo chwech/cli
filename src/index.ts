@@ -5,8 +5,7 @@ import program from 'commander'
 
 import download from './download'
 import { caniuse, updateCaniuseVersion, fetchCaniuseDataJson } from './caniuse'
-
-const tpl = require('./tpl')
+import { ls } from './tpl'
 
 interface tpl {
   [propName: string]: string;
@@ -58,7 +57,7 @@ program
   .command('tpl')
   .description('列出现有模板列表')
   .action(() => {
-    tpl.ls()
+    ls()
   });
 
 program.parse(process.argv);
