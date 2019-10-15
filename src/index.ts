@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 import path from 'path'
-
 import program from 'commander'
-
 import download from './download'
 import { caniuse, updateCaniuseVersion, fetchCaniuseDataJson } from './caniuse'
 import { ls } from './tpl'
