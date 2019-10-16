@@ -1,4 +1,3 @@
-// const download = require('download-git-repo')
 import download from 'download-git-repo'
 
 export default function downloadTemplate(template: string, target = 'tmp'): Promise<string> {
