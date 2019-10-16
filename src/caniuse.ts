@@ -2,11 +2,11 @@ import fs from 'fs'
 import https from 'https'
 import path from 'path'
 import chalk from 'chalk'
-import httpModule = require("http");
-const ProgressBar = require('progress');
+import httpModule = require("http")
+import ProgressBar from 'progress'
 
 let log = console.log
-
+const fsPromise = fs.promises
 interface configJson {
   CANIUSE_DATA_VERSION: string
 }
@@ -14,21 +14,20 @@ interface configJson {
 type nodeException = NodeJS.ErrnoException | null
 
 export async function updateCaniuseVersion() {
-  fs.readFile(path.join(__dirname, './data/config.json'), async (err: nodeException, data: Buffer) => {
-    if (err) {
-      console.log(err)
-    }
+  const configPath = path.join(__dirname, './data/config.json')
+
+  try {
+    let data = await fsPromise.readFile(configPath)
     let config: configJson = JSON.parse(data.toString('utf8'))
     config.CANIUSE_DATA_VERSION = await checkVersion()
-
-    fs.writeFile(path.join(__dirname, './data/config.json'), JSON.stringify(config), (err: nodeException) => {
-      if (err) throw err;
-      console.log('当前使用caniuse数据库版本为：', config.CANIUSE_DATA_VERSION);
-    })
-  })
+    await fsPromise.writeFile(configPath, JSON.stringify(config))
+    console.log('当前使用caniuse数据库版本为：', config.CANIUSE_DATA_VERSION)
+  } catch (error) {
+    console.error('更新caniuse数据库版本号失败:', error)
+  }
 }
 
-export function fetchCaniuseDataJson() {
+export function fetchCaniuseDataJson(): Promise<string> {
   return new Promise((resolve, reject) => {
     const req = https.get('https://raw.githubusercontent.com/Fyrd/caniuse/master/data.json', (res: httpModule.IncomingMessage) => {
       var len = parseInt(res.headers['content-length'] as string, 10);  
