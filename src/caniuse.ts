@@ -1,9 +1,9 @@
-const fs = require('fs')
-const https = require('https')
-const { CANIUSE_DATA_VERSION } = require('./data/config')
-const chalk = require('chalk');
+import fs from 'fs'
+import https from 'https'
+import path from 'path'
+import chalk from 'chalk'
+import httpModule = require("http");
 const ProgressBar = require('progress');
-const path = require('path')
 
 let log = console.log
 
@@ -11,25 +11,27 @@ interface configJson {
   CANIUSE_DATA_VERSION: string
 }
 
+type nodeException = NodeJS.ErrnoException | null
+
 export async function updateCaniuseVersion() {
-  fs.readFile(path.join(__dirname, './data/config.json'), async (err: Error, data: string | configJson) => {
+  fs.readFile(path.join(__dirname, './data/config.json'), async (err: nodeException, data: Buffer) => {
     if (err) {
       console.log(err)
     }
-    data = JSON.parse(data as string) as configJson
-    data.CANIUSE_DATA_VERSION = await checkVersion()
+    let config: configJson = JSON.parse(data.toString('utf8'))
+    config.CANIUSE_DATA_VERSION = await checkVersion()
 
-    fs.writeFile(path.join(__dirname, './data/config.json'), JSON.stringify(data), (err: Error) => {
+    fs.writeFile(path.join(__dirname, './data/config.json'), JSON.stringify(config), (err: nodeException) => {
       if (err) throw err;
-      console.log('当前使用caniuse数据库版本为：', (data as configJson).CANIUSE_DATA_VERSION);
+      console.log('当前使用caniuse数据库版本为：', config.CANIUSE_DATA_VERSION);
     })
   })
 }
 
 export function fetchCaniuseDataJson() {
   return new Promise((resolve, reject) => {
-    const req = https.get('https://raw.githubusercontent.com/Fyrd/caniuse/master/data.json', (res: any) => {
-      var len = parseInt(res.headers['content-length'], 10);  
+    const req = https.get('https://raw.githubusercontent.com/Fyrd/caniuse/master/data.json', (res: httpModule.IncomingMessage) => {
+      var len = parseInt(res.headers['content-length'] as string, 10);  
       let rawData = ''
       var bar = new ProgressBar('downloading [:bar] :rate/bps :percent :etas', {
         complete: '=',
@@ -43,7 +45,7 @@ export function fetchCaniuseDataJson() {
       });
       // 获取数据完成
       res.on('end', () => {
-        fs.writeFile('data.json', rawData, (err: Error) => {
+        fs.writeFile('data.json', rawData, (err: nodeException) => {
           if (err) throw err;
           console.log('caniuse数据库已更新');
         });
@@ -60,7 +62,7 @@ export function fetchCaniuseDataJson() {
 
 function fetchCaniusePackageJson (): Promise<string> {
   return new Promise((resolve, reject) => {
-    const req = https.get('https://raw.githubusercontent.com/Fyrd/caniuse/master/package.json', (res: any) => {
+    const req = https.get('https://raw.githubusercontent.com/Fyrd/caniuse/master/package.json', (res: httpModule.IncomingMessage) => {
       let rawData = ''
       res.on('data', (d: any) => {
         rawData += d
@@ -95,7 +97,7 @@ interface dataJson {
 }
 function search(feature: string) {
   return new Promise((resolve, reject) => { 
-    fs.readFile(path.join(__dirname, './data/data.json'), 'utf8', (err: any, data: string | dataJson) => {
+    fs.readFile(path.join(__dirname, './data/data.json'), 'utf8', (err: nodeException, data: string) => {
       if (err) {
         reject(err)
       }
@@ -117,6 +119,8 @@ function search(feature: string) {
 }
 
 export async function caniuse (feature: string) {
+  const { CANIUSE_DATA_VERSION } = require('./data/config')
+
   try {
     // 检查caniuse数据库是否过期
     let version = await checkVersion()

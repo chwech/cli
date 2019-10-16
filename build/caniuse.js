@@ -1,30 +1,32 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs = require('fs');
-const https = require('https');
-const { CANIUSE_DATA_VERSION } = require('./data/config');
-const chalk = require('chalk');
+const fs_1 = __importDefault(require("fs"));
+const https_1 = __importDefault(require("https"));
+const path_1 = __importDefault(require("path"));
+const chalk_1 = __importDefault(require("chalk"));
 const ProgressBar = require('progress');
-const path = require('path');
 let log = console.log;
 async function updateCaniuseVersion() {
-    fs.readFile(path.join(__dirname, './data/config.json'), async (err, data) => {
+    fs_1.default.readFile(path_1.default.join(__dirname, './data/config.json'), async (err, data) => {
         if (err) {
             console.log(err);
         }
-        data = JSON.parse(data);
-        data.CANIUSE_DATA_VERSION = await checkVersion();
-        fs.writeFile(path.join(__dirname, './data/config.json'), JSON.stringify(data), (err) => {
+        let config = JSON.parse(data.toString('utf8'));
+        config.CANIUSE_DATA_VERSION = await checkVersion();
+        fs_1.default.writeFile(path_1.default.join(__dirname, './data/config.json'), JSON.stringify(config), (err) => {
             if (err)
                 throw err;
-            console.log('当前使用caniuse数据库版本为：', data.CANIUSE_DATA_VERSION);
+            console.log('当前使用caniuse数据库版本为：', config.CANIUSE_DATA_VERSION);
         });
     });
 }
 exports.updateCaniuseVersion = updateCaniuseVersion;
 function fetchCaniuseDataJson() {
     return new Promise((resolve, reject) => {
-        const req = https.get('https://raw.githubusercontent.com/Fyrd/caniuse/master/data.json', (res) => {
+        const req = https_1.default.get('https://raw.githubusercontent.com/Fyrd/caniuse/master/data.json', (res) => {
             var len = parseInt(res.headers['content-length'], 10);
             let rawData = '';
             var bar = new ProgressBar('downloading [:bar] :rate/bps :percent :etas', {
@@ -39,7 +41,7 @@ function fetchCaniuseDataJson() {
             });
             // 获取数据完成
             res.on('end', () => {
-                fs.writeFile('data.json', rawData, (err) => {
+                fs_1.default.writeFile('data.json', rawData, (err) => {
                     if (err)
                         throw err;
                     console.log('caniuse数据库已更新');
@@ -57,7 +59,7 @@ function fetchCaniuseDataJson() {
 exports.fetchCaniuseDataJson = fetchCaniuseDataJson;
 function fetchCaniusePackageJson() {
     return new Promise((resolve, reject) => {
-        const req = https.get('https://raw.githubusercontent.com/Fyrd/caniuse/master/package.json', (res) => {
+        const req = https_1.default.get('https://raw.githubusercontent.com/Fyrd/caniuse/master/package.json', (res) => {
             let rawData = '';
             res.on('data', (d) => {
                 rawData += d;
@@ -81,7 +83,7 @@ async function checkVersion() {
 }
 function search(feature) {
     return new Promise((resolve, reject) => {
-        fs.readFile(path.join(__dirname, './data/data.json'), 'utf8', (err, data) => {
+        fs_1.default.readFile(path_1.default.join(__dirname, './data/data.json'), 'utf8', (err, data) => {
             if (err) {
                 reject(err);
             }
@@ -98,12 +100,13 @@ function search(feature) {
     });
 }
 async function caniuse(feature) {
+    const { CANIUSE_DATA_VERSION } = require('./data/config');
     try {
         // 检查caniuse数据库是否过期
         let version = await checkVersion();
         if (version !== CANIUSE_DATA_VERSION) {
-            log(`提示：caniuse数据库版本有更新, 当前版本号${chalk.green(CANIUSE_DATA_VERSION)},最新版本号${chalk.green(version)}, 
-      你可以运行${chalk.red('chwech caniuse update')}更新数据库`);
+            log(`提示：caniuse数据库版本有更新, 当前版本号${chalk_1.default.green(CANIUSE_DATA_VERSION)},最新版本号${chalk_1.default.green(version)}, 
+      你可以运行${chalk_1.default.red('chwech caniuse update')}更新数据库`);
         }
         const result = await search(feature);
         result.forEach((item) => {
