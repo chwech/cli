@@ -6,7 +6,7 @@ import httpModule = require("http")
 import ProgressBar from 'progress'
 
 let log = console.log
-const fsPromise = fs.promises
+const fsPromise = fs.promises // fs的promise api node版本10+
 interface configJson {
   CANIUSE_DATA_VERSION: string
 }

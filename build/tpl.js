@@ -6,8 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @export
  */
 function ls() {
-    const data = require('./data/tpl.json');
-    const templateList = data.template;
+    const templateList = require('./data/tpl.json');
     templateList.forEach((tpl) => {
         console.log(`模板：${tpl.name}   地址：${tpl.git}`);
     });

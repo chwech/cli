@@ -9,7 +9,7 @@ const path_1 = __importDefault(require("path"));
 const chalk_1 = __importDefault(require("chalk"));
 const progress_1 = __importDefault(require("progress"));
 let log = console.log;
-const fsPromise = fs_1.default.promises;
+const fsPromise = fs_1.default.promises; // fs的promise api node版本10+
 async function updateCaniuseVersion() {
     const configPath = path_1.default.join(__dirname, './data/config.json');
     try {

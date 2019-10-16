@@ -9,8 +9,7 @@ interface tpl {
  * @export
  */
 export function ls(): void {
-  const data: any = require('./data/tpl.json')
-  const templateList: [tpl] = data.template
+  const templateList: tpl[] = require('./data/tpl.json')
 
   templateList.forEach((tpl: tpl) => {
     console.log(`模板：${tpl.name}   地址：${tpl.git}`)
