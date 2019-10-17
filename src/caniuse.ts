@@ -2,8 +2,8 @@ import fs from 'fs'
 import https from 'https'
 import path from 'path'
 import chalk from 'chalk'
-import httpModule = require("http")
 import ProgressBar from 'progress'
+import httpModule = require("http")
 
 let log = console.log
 const fsPromise = fs.promises // fs的promise api node版本10+
@@ -82,7 +82,7 @@ function fetchCaniusePackageJson (): Promise<string> {
 interface packageJson {
   version: string
 }
-async function checkVersion () {
+async function checkVersion (): Promise<string> {
   let packageJson: string | packageJson = await fetchCaniusePackageJson()
   packageJson = JSON.parse(packageJson) as packageJson
   return packageJson.version
@@ -94,7 +94,7 @@ interface data {
 interface dataJson {
   data: data
 }
-function search(feature: string) {
+function search(feature: string): Promise<any[]> {
   return new Promise((resolve, reject) => { 
     fs.readFile(path.join(__dirname, './data/data.json'), 'utf8', (err: nodeException, data: string) => {
       if (err) {
@@ -117,7 +117,7 @@ function search(feature: string) {
   })
 }
 
-export async function caniuse (feature: string) {
+export async function caniuse (feature: string): Promise<void> {
   const { CANIUSE_DATA_VERSION } = require('./data/config')
 
   try {
