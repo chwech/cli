@@ -1,3 +1,5 @@
+[![Build Status](https://www.travis-ci.org/chwech/cli.svg?branch=master)](https://www.travis-ci.org/chwech/cli)   
+
 # 安装
 ```
 npm i -g @chwech/cli
