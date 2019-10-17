@@ -1,0 +1,14 @@
+language: node_js
+node_js: 12.12.0
+before_install:
+- npm config set registry https://registry.npm.taobao.org/
+- npm i -g typescript
+script:
+- npm run build
+deploy:
+  provider: npm
+  email: 804699297@qq.com
+  api_key:
+    secure: LMcUEztSPSV0ZxOgobdbai9Zj5FcN2Fn1UD/WS+9/QjeFDfcfpRIUjbjZk0PqqpGWZGEI2xLK1TyE2PsZtY3ccDp6KHp3lsxMhcXQyYMh/qVN4AIoEOC2YGV04vIrMg/7JPMeW0yD3+Jy6zAWOC4ax/kjkc0qWybrKOlwDTq3g1XJ4VxWR4it9Zv7xsdXb7rbh3sxzfbv08lDpOH/5UECFa4nIdExbbdd5NB/Nl5KwAdCOneeFeNgu/iR//p3uhfFgXfqbDCoMNYZfbJcKynZPBoMs4nklc7LTd0MDIOUcBW4AGbb0WZoPmk/Q91mBc15wAAvMxB3W7+aZxMK/DEnc6kEllX0Sp/PFdnKxMm89nHizLNDV0Ne7K1mrXwHMo3+AFArx9+hSc6k5kBZNT4gfkYVnOkkVdCBxXRElaLQGSS2dPIi4kevmjZeS9czj2cJ7NiRPs8I1MaUaTIFLGG2fNqlvIqGYtBNx6EktnumJt1VHl9tkJK9enD90LgLAf2LZCuPOGGBT2ktYr/C8R9T9tfNr3ltblSfjRXZ/+s3eE0mtZBcapuR2Nvbf/3qwn1Bju7ztTDTCp1YE4gQE8f0JDi3OkTjETIrkzC/sV+lZicS504zpTlVCfme7/oViP9Jid8/k8nAcP7HfkMabjw1JfeCW4/iNmi1gEUTRGqzAM=
+  on:
+    tags: true
