@@ -12,6 +12,9 @@ const tpl_1 = require("./tpl");
 const TPL_NAME = {
     'api-cloud': 'api-cloud-template'
 };
+// 显示版本号
+const version = require(path_1.default.resolve(__dirname, '..', 'package.json')).version;
+commander_1.default.version(version, '-v, --version', 'chwech-cli version');
 commander_1.default
     .command('init <tpl> [target]')
     .description('初始化项目')
