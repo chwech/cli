@@ -1,4 +1,5 @@
-[![Build Status](https://www.travis-ci.org/chwech/cli.svg?branch=master)](https://www.travis-ci.org/chwech/cli)   
+[![Build Status](https://www.travis-ci.org/chwech/cli.svg?branch=master)](https://www.travis-ci.org/chwech/cli) <a href="https://npmcharts.com/compare/@chwech/cli?interval=1"><img alt="npm" src="https://img.shields.io/npm/dt/@chwech/cli"></a>
+<a href="https://www.npmjs.com/package/@chwech/cli"><img alt="npm (scoped)" src="https://img.shields.io/npm/v/@chwech/cli"></a>
 
 # 安装
 ```
