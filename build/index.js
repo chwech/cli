@@ -5,21 +5,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __importDefault(require("path"));
-const commander_1 = __importDefault(require("commander"));
 const download_1 = __importDefault(require("./download"));
 const caniuse_1 = require("./caniuse");
 const tpl_1 = require("./tpl");
-const TPL_NAME = {
-    'api-cloud': 'api-cloud-template'
-};
+const commander_1 = require("commander");
+const program = new commander_1.Command();
+program
+    .option('-i, --init', '初始化')
+    .option('-l, --ls', '列出模板')
+    .option('-e, --empty', '清空模板');
 // 显示版本号
 const version = require(path_1.default.resolve(__dirname, '..', 'package.json')).version;
-commander_1.default.version(version, '-v, --version', 'chwech-cli version');
-commander_1.default
+program.version(version, '-v, --version', 'chwech-cli version');
+// 帮助信息
+program
+    .name('chwech')
+    .usage('[选项] [命令]');
+// 子命令
+program
     .command('init <tpl> [target]')
     .description('初始化项目')
     .action((tpl, target) => {
-    console.log(tpl, target);
     if (target) {
         let workspace = process.cwd();
         let dirname = path_1.default.basename(workspace);
@@ -30,15 +36,16 @@ commander_1.default
     else {
         target = '.';
     }
-    download_1.default(TPL_NAME[tpl], target)
+    download_1.default(tpl, target)
         .then((target) => {
         console.log(target);
+        console.log('初始化成功');
     })
         .catch((err) => {
         console.log(err);
     });
 });
-commander_1.default
+program
     .command('caniuse <feature>')
     .description('caniuse查找特性支持情况')
     .action(async (feature) => {
@@ -55,10 +62,25 @@ commander_1.default
         caniuse_1.caniuse(feature);
     }
 });
-commander_1.default
-    .command('tpl')
-    .description('列出现有模板列表')
-    .action(() => {
-    tpl_1.ls();
+program
+    .command('tpl [action] [name] [url]')
+    .description('列出现有项目模板列表')
+    .action((action, name, url) => {
+    if (action === 'add') {
+        tpl_1.add(name, url);
+    }
+    else if (action === 'edit') {
+        console.log('开发中...');
+    }
+    else {
+        tpl_1.ls();
+    }
 });
-commander_1.default.parse(process.argv);
+program.parse(process.argv);
+// 列出模板
+if (program.ls) {
+    tpl_1.ls();
+}
+if (program.empty) {
+    tpl_1.clearAll();
+}

@@ -1,6 +1,1 @@
-[
-  {
-    "name": "api-cloud-template",
-    "git": "https://github.com/chwech/api-cloud-template"
-  }
-]
+[{"name":"pixijs-project-template","git":"https://github.com/chwech/pixijs-project-template.git"}]
