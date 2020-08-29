@@ -31,3 +31,7 @@ chwech caniuse es6
 // 更新caniuse数据库
 chwech caniuse update
 ```
+
+# TODO
+- [ ] 不勾选
+- [x] 勾选
