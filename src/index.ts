@@ -5,7 +5,21 @@ import { caniuse, updateCaniuseVersion, fetchCaniuseDataJson } from './caniuse'
 import { ls, add, clearAll } from './tpl'
 import { Command } from 'commander'
 const program = new Command();
+import os from 'os'
+import 
+ { schema, defaultOptions, loadOptions, saveOptions } from './options'
+import inquirer from 'inquirer'
+import shell from 'shelljs'
 
+ try {
+   
+   const value = schema.validateAsync(defaultOptions)
+   console.log(value)
+ } catch (error) {
+   console.log(error)
+ }
+
+console.log(os.homedir())
 program
   .option('-i, --init', '初始化')
   .option('-l, --ls', '列出模板')
@@ -72,6 +86,60 @@ program
       ls()
     }
   });
+
+const docpub = (docPath: string, pubPath: string) => {
+  shell.cd(path.resolve(pubPath, '..'))
+  shell.exec('git checkout master')
+  shell.exec('git pull')
+  shell.cp('-Ruf', path.resolve(docPath) + '/*', path.resolve(pubPath));
+  shell.exec('git add .')
+  shell.exec('git commit -m "chore(release): 部署文档"')          
+  shell.exec('git push')
+}
+
+program
+  .command('docpub <name>')
+  .description('部署文档')
+  .action((name) => {
+    const options = loadOptions()
+    const pathPair = options?.docsDirMap?.[name]
+
+    if (!pathPair) {
+      inquirer
+        .prompt([
+          /* Pass your questions in here */
+          {
+            type: 'input',
+            name: 'docPath',
+            message: '请输入打包后文档资源的路径'
+          },
+          {
+            type: 'input',
+            name: 'pubPath',
+            message: '请输入部署目录路径'
+          }
+        ])
+        .then((answers) => {
+          saveOptions({
+            docsDirMap: {
+              ...loadOptions().docsDirMap,
+              [name]: [path.resolve(answers.docPath), path.resolve(answers.pubPath)] 
+            }
+          })
+
+          docpub(answers.docPath, answers.pubPath)
+        })
+        .catch((error) => {
+          if (error.isTtyError) {
+            // Prompt couldn't be rendered in the current environment
+          } else {
+            // Something else went wrong
+          }
+        });
+    } else {
+      docpub(pathPair[0], pathPair[1])
+    }
+  })
 
 program.parse(process.argv);
 

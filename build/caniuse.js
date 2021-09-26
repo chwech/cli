@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -11,18 +20,20 @@ const chalk_1 = __importDefault(require("chalk"));
 const progress_1 = __importDefault(require("progress"));
 let log = console.log;
 const fsPromise = fs_1.default.promises; // fs的promise api node版本10+
-async function updateCaniuseVersion() {
-    const configPath = path_1.default.join(__dirname, './data/config.json');
-    try {
-        let data = await fsPromise.readFile(configPath);
-        let config = JSON.parse(data.toString('utf8'));
-        config.CANIUSE_DATA_VERSION = await checkVersion();
-        await fsPromise.writeFile(configPath, JSON.stringify(config));
-        console.log('当前使用caniuse数据库版本为：', config.CANIUSE_DATA_VERSION);
-    }
-    catch (error) {
-        console.error('更新caniuse数据库版本号失败:', error);
-    }
+function updateCaniuseVersion() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const configPath = path_1.default.join(__dirname, './data/config.json');
+        try {
+            let data = yield fsPromise.readFile(configPath);
+            let config = JSON.parse(data.toString('utf8'));
+            config.CANIUSE_DATA_VERSION = yield checkVersion();
+            yield fsPromise.writeFile(configPath, JSON.stringify(config));
+            console.log('当前使用caniuse数据库版本为：', config.CANIUSE_DATA_VERSION);
+        }
+        catch (error) {
+            console.error('更新caniuse数据库版本号失败:', error);
+        }
+    });
 }
 exports.updateCaniuseVersion = updateCaniuseVersion;
 function fetchCaniuseDataJson() {
@@ -77,10 +88,12 @@ function fetchCaniusePackageJson() {
         req.end();
     });
 }
-async function checkVersion() {
-    let packageJson = await fetchCaniusePackageJson();
-    packageJson = JSON.parse(packageJson);
-    return packageJson.version;
+function checkVersion() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let packageJson = yield fetchCaniusePackageJson();
+        packageJson = JSON.parse(packageJson);
+        return packageJson.version;
+    });
 }
 function search(feature) {
     return new Promise((resolve, reject) => {
@@ -100,43 +113,45 @@ function search(feature) {
         });
     });
 }
-async function caniuse(feature) {
-    const { CANIUSE_DATA_VERSION } = require('./data/config');
-    try {
-        // 检查caniuse数据库是否过期
-        let version = await checkVersion();
-        if (version !== CANIUSE_DATA_VERSION) {
-            log(`提示：caniuse数据库版本有更新, 当前版本号${chalk_1.default.green(CANIUSE_DATA_VERSION)},最新版本号${chalk_1.default.green(version)}, 
+function caniuse(feature) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { CANIUSE_DATA_VERSION } = require('./data/config');
+        try {
+            // 检查caniuse数据库是否过期
+            let version = yield checkVersion();
+            if (version !== CANIUSE_DATA_VERSION) {
+                log(`提示：caniuse数据库版本有更新, 当前版本号${chalk_1.default.green(CANIUSE_DATA_VERSION)},最新版本号${chalk_1.default.green(version)}, 
       你可以运行${chalk_1.default.red('chwech caniuse update')}更新数据库`);
-        }
-        const result = await search(feature);
-        result.forEach((item) => {
-            log('==================================================');
-            log('特性:', item.title);
-            log('浏览器支持情况:');
-            let findOneSupport = false;
-            let isCheckVersion = [];
-            for (const [browser, versions] of Object.entries(item.stats)) {
-                for (const [version, isSupport] of Object.entries(versions)) {
-                    if (isCheckVersion.includes(version)) {
-                        findOneSupport = false;
-                        continue;
-                    }
-                    if (findOneSupport) {
-                        continue;
-                    }
-                    if (isSupport === 'y') {
-                        log(browser + '支持版本' + version + '以上');
-                        findOneSupport = true;
-                        isCheckVersion.push(version);
+            }
+            const result = yield search(feature);
+            result.forEach((item) => {
+                log('==================================================');
+                log('特性:', item.title);
+                log('浏览器支持情况:');
+                let findOneSupport = false;
+                let isCheckVersion = [];
+                for (const [browser, versions] of Object.entries(item.stats)) {
+                    for (const [version, isSupport] of Object.entries(versions)) {
+                        if (isCheckVersion.includes(version)) {
+                            findOneSupport = false;
+                            continue;
+                        }
+                        if (findOneSupport) {
+                            continue;
+                        }
+                        if (isSupport === 'y') {
+                            log(browser + '支持版本' + version + '以上');
+                            findOneSupport = true;
+                            isCheckVersion.push(version);
+                        }
                     }
                 }
-            }
-            log('==================================================');
-        });
-    }
-    catch (error) {
-        log('查找失败：', error);
-    }
+                log('==================================================');
+            });
+        }
+        catch (error) {
+            log('查找失败：', error);
+        }
+    });
 }
 exports.caniuse = caniuse;

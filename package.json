@@ -13,13 +13,20 @@
   "dependencies": {
     "chalk": "^2.4.2",
     "download-git-repo": "^2.0.0",
-    "progress": "^2.0.3"
+    "inquirer": "^8.1.5",
+    "joi": "^17.4.2",
+    "lodash": "^4.17.21",
+    "progress": "^2.0.3",
+    "shelljs": "^0.8.4"
   },
   "bin": {
     "chwech": "build/index.js"
   },
   "devDependencies": {
-    "@types/node": "^12.7.12",
+    "@types/inquirer": "^8.1.2",
+    "@types/lodash": "^4.14.174",
+    "@types/node": "^16.10.1",
+    "@types/shelljs": "^0.8.9",
     "commander": "^3.0.1"
   },
   "publishConfig": {
